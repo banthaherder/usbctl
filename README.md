@@ -35,6 +35,8 @@ usbctl create <name> <size_gb> [--fs FILESYSTEM]
 
 Creates a new virtual disk with the specified name and size.
 
+**Note:** Disk names must be 11 characters or less to ensure compatibility with FAT/ExFAT filesystems.
+
 **Examples:**
 ```bash
 # Create a 4GB ExFAT disk named "backup"

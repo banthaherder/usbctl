@@ -127,10 +127,34 @@ def get_mountpoints_from_disk(device: str) -> list[str]:
 # ----- core operations -----
 
 
+def validate_disk_name(name: str) -> bool:
+    """
+    validate disk name meets filesystem requirements
+    volume labels for FAT/ExFAT are limited to 11 characters
+    """
+    if len(name) > 11:
+        print(f"error: disk name '{name}' is too long (max 11 characters)")
+        print(f"  current length: {len(name)}")
+        return False
+    if not name:
+        print("error: disk name cannot be empty")
+        return False
+    # check for invalid characters
+    invalid_chars = ["/", "\\", ":", "*", "?", '"', "<", ">", "|"]
+    for char in invalid_chars:
+        if char in name:
+            print(f"error: disk name contains invalid character '{char}'")
+            return False
+    return True
+
+
 def create_disk(name: str, size_gb: float, fs: str = "ExFAT") -> None:
     """
     create a new virtual disk file, attach it as raw, and format it
     """
+    if not validate_disk_name(name):
+        return
+
     disk_path = BASE_DIR / f"{name}.raw"
     if disk_path.exists():
         print(f"error: disk '{name}' already exists at {disk_path}")
